@@ -1,0 +1,53 @@
+#!/bin/bash -u
+set -o pipefail
+# Note that there is no '-e' above -- that's because this script needs to do some
+# cleanup (retain control) in the event of a failure. The do_or_die() method is
+# introduced to simplify this process....
+
+function main()
+{
+	setup
+	echo "Stuff is starting"
+	do_or_die "Part 1" sub_function_1 || teardown
+	do_or_die "Part 2" sub_function_2 || teardown
+	echo "Stuff is complete"
+	teardown
+}
+
+function do_or_die()
+{
+	local tag="$1"; shift
+	local retval
+	echo "Starting $tag"
+	"$@"
+	retval=$?
+	if [[ $retval -ne 0 ]]; then
+		echo >&2 "$tag FAILED"
+		exit $retval
+	fi
+	echo "$tag complete"
+}
+
+function setup()
+{
+	echo "Creating some state"
+}
+
+function teardown()
+{
+	echo "Removing temporary state"
+}
+
+function sub_function_1()
+{
+	echo "Doing thing 1"
+	# Implicitly returns 0
+}
+
+function sub_function_2()
+{
+	echo "Doing (and failing at) thing 2"
+	return 1
+}
+
+main "$@"
