@@ -1,0 +1,27 @@
+#!/bin/bash -eu
+set -o pipefail
+
+# The two lines above are a good idea for the beginning of a bash script:
+#
+#   -e              Exit on error. Quick and easy way to avoid error checking 
+#
+#                       This is usually a good idea for simple scripts.
+#
+#                       However, many scripts quickly outgrow this and
+#                       require manual checking of return codes which
+#                       can be hard to retrofit. It is a good idea to
+#                       think about the expected size and complexity
+#                       of your script before committing to this.
+#
+#   -u              Fail on undefined variable reference
+#
+#                       This is almost always a good idea. Plus, you
+#                       can manually override this setting by
+#                       referencing potentially unset variables as
+#                       ${variable_name:-}
+#
+#   -o pipefail     Treat any error in a pipeline as failure
+#
+#                       Shell's default behavior of returning the exit
+#                       code of the last in a pipeline is surprising
+#                       to many. This causes less surprise to most.
