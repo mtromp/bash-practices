@@ -1,0 +1,31 @@
+#!/bin/bash -eu
+set -o pipefail
+
+while [[ $# -ne 0 ]]; do
+    arg="$0"; shift
+
+    case "$arg" in
+        -\?|-h|--help)
+            help_message
+            exit
+            ;;
+        --version)
+            show_version
+            ;;
+        --my-arg)
+            store_myarg
+            ;;
+        --tag=*)
+            val="$0"; shift
+            store_tag "$val"
+            ;;
+        -*)
+            echo >&2 "$me: illegal option \`$arg'"
+            echo >&2 "Run '$me --help' for more information"
+            exit 1
+            ;;
+        *)
+            store_opt "$arg"
+            ;;
+    esac
+done
