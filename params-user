@@ -1,0 +1,21 @@
+#!/bin/bash -eu
+set -o pipefail
+
+# Both of the following assume params.sh exists in the same directory as params-user
+
+# This one will work only if the script is called from its own directory:
+#    $ ./params-user
+source params.sh
+
+# This one will work no matter the working directory when the script is called and the
+# calling pattern:
+#    $ cd otherdir && ../params-user
+#    $ PATH=<mypath>:$PATH && cd /tmp && params-user
+#    $ /full/path/to/params-user
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${my_dir}/params.sh"
+
+
+# Its only weakness is when you need to be aware of symlinks in the parent
+# directory chain. There is another (much more complex) pattern to follow if it is
+# is necessary to support that use case.

@@ -1,0 +1,36 @@
+#!/bin/bash -eu
+set -o pipefail
+
+# Both of the following assume params.sh exists in the same directory as params-user
+
+# This one will work only if the script is called from its own directory:
+#    $ ./params-user
+echo "The 'source params.sh' will work if the current working directory is also " \
+     "the location of the params-user-exposed"
+source params.sh
+
+echo "params-user-exposed sees MY_ENVIRONMENT as ${MY_ENVIRONMENT}."
+echo "params-user-exposed sees DEBUG_LEVEL as ${DEBUG_LEVEL}. It was exported."
+echo "" # blank line
+
+# This one will work no matter the working directory when the script is called and the
+# calling pattern:
+#    $ cd otherdir && ../params-user
+#    $ PATH=<mypath>:$PATH && cd /tmp && params-user
+#    $ /full/path/to/params-user
+
+echo "Here's what makes up my_dir:"
+echo "    BASH_SOURCE[0]: ${BASH_SOURCE[0]}"
+bash_dirname="$(dirname "${BASH_SOURCE[0]}")"
+echo "    dirname of BASH_SOURCE[0]: ${bash_dirname}"
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "    change directory to '${bash_dirname}', if successful execute pwd"
+echo "my_dir is the full path to the scripts: ${my_dir}"
+source "${my_dir}/params.sh"
+
+# Its only weakness is when you need to be aware of symlinks in the parent
+# directory chain. There is another (much more complex) pattern to follow if it is
+# is necessary to support that use case.
+
+echo "params-user-exposed sees MY_ENVIRONMENT as ${MY_ENVIRONMENT}."
+echo "params-user-exposed sees DEBUG_LEVEL as ${DEBUG_LEVEL}. It was exported."
