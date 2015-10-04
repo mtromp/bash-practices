@@ -19,7 +19,7 @@ active shell will interpret the text in the file as commands. For example, the .
 meant to be sourced, not executed. .bashrc does not have start with #! and does not 
 have its executable bits set.
 
-Shared bash scripts contain functions and variable that are common to a group of
+Shared bash scripts contain functions and variables that are common to a group of
 executable scripts.
 
 
