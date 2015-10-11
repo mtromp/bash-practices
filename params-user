@@ -15,7 +15,17 @@ source params.sh
 my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${my_dir}/params.sh"
 
-
 # Its only weakness is when you need to be aware of symlinks in the parent
 # directory chain. There is another (much more complex) pattern to follow if it is
 # is necessary to support that use case.
+
+
+# Using the parameters
+
+if [[ $MY_ENVIRONMENT == "Apple" ]]; then
+	echo "MY_ENVIRONMENT is set to Apple"
+else
+	echo "MY_ENVIRONMENT is NOT Apple"
+fi
+
+echo "The debug level has been set to: $DEBUG_LEVEL"
