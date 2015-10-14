@@ -2,7 +2,7 @@
 set -o pipefail
 
 while [[ $# -ne 0 ]]; do
-    arg="$0"; shift
+    arg="$1"; shift
 
     case "$arg" in
         -\?|-h|--help)
@@ -16,7 +16,7 @@ while [[ $# -ne 0 ]]; do
             store_myarg
             ;;
         --tag=*)
-            val="$0"; shift
+            val="$1"; shift
             store_tag "$val"
             ;;
         -*)
