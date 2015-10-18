@@ -1,31 +1,84 @@
 #!/bin/bash -eu
 set -o pipefail
 
-while [[ $# -ne 0 ]]; do
-    arg="$1"; shift
+MY_CMD=${BASH_SOURCE[0]}
 
-    case "$arg" in
-        -\?|-h|--help)
-            help_message
-            exit
-            ;;
-        --version)
-            show_version
-            ;;
-        --my-arg)
-            store_myarg
-            ;;
-        --tag=*)
-            val="$1"; shift
-            store_tag "$val"
-            ;;
-        -*)
-            echo >&2 "$me: illegal option \`$arg'"
-            echo >&2 "Run '$me --help' for more information"
-            exit 1
-            ;;
-        *)
-            store_opt "$arg"
-            ;;
-    esac
-done
+function help_message()
+{
+	echo "Here is where you would place statement to"
+	echo "    print the appropriate help message"
+	
+	echo ""
+	echo "try the following different command-lines to see which functions are called:"
+	echo "./argparse --version --my-arg --tag=\"Very good\""
+	echo "./argparse --version --my-arg --tag=\"VeryGood\""
+	echo "./argparse --version --my-arg --tag= \"VeryGood\""
+	echo "./argparse --tag= no --tag= yes option1 option2"
+	echo "./argparse ?"
+	echo "./argparse -?"
+	echo "./argparse --unknown"
+	
+	echo ""
+	echo "Notice which command-lines work as expected. Spaces, even in quotes, are parsed"
+	echo "Note that the \"--tag= \" option needs a space before the parameter."	
+}
+
+function show_version()
+{
+	echo "Here would be where you would print the script version number"
+}
+
+function store_myarg()
+{
+	echo "The \"--my-arg option\" has been detected. In this function "
+	echo "    a default parameter might be changed from false to true."
+}
+
+function store_tag()
+{
+	echo "The  \"--tag= <value>\" option has been detected with the"
+	echo "    value \"$@\". would be assigned to a global variable."
+}
+
+function store_opt()
+{
+	echo "An option was detected. Here's where the"
+	echo "    \"$@\" option would be interpreted and stored for use by the script."
+}
+
+function parse_command_line()
+{
+	while [[ $# -ne 0 ]]; do
+		arg="$1"; shift
+
+		case "$arg" in
+			-\?|-h|--help)
+				help_message
+				exit
+				;;
+			--version)
+				show_version
+				;;
+			--my-arg)
+				store_myarg
+				;;
+			--tag=*)
+				val="$1"; shift
+				store_tag "$val"
+				;;
+			-*)
+				echo >&2 "$MY_CMD: illegal option \`$arg'"
+				echo >&2 "Run '$MY_CMD --help' for more information"
+				exit 1
+				;;
+			*)
+				store_opt "$arg"
+				;;
+		esac
+	done
+}
+
+parse_command_line $@
+
+
+
