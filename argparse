@@ -5,22 +5,25 @@ MY_CMD=${BASH_SOURCE[0]}
 
 function help_message()
 {
-	echo "Here is where you would place statement to"
-	echo "    print the appropriate help message"
+	cat <<helpDOC
 	
-	echo ""
-	echo "try the following different command-lines to see which functions are called:"
-	echo "./argparse --version --my-arg --tag=\"Very good\""
-	echo "./argparse --version --my-arg --tag=\"VeryGood\""
-	echo "./argparse --version --my-arg --tag= \"VeryGood\""
-	echo "./argparse --tag= no --tag= yes option1 option2"
-	echo "./argparse ?"
-	echo "./argparse -?"
-	echo "./argparse --unknown"
-	
-	echo ""
-	echo "Notice which command-lines work as expected. Spaces, even in quotes, are parsed"
-	echo "Note that the \"--tag= \" option needs a space before the parameter."	
+Here is where you would place statement to
+    print the appropriate help message
+
+
+    try the following different command-lines to see which functions are called:
+	./argparse --version --my-arg --tag="Very good"
+	./argparse --version --my-arg --tag="VeryGood"
+	./argparse --version --my-arg --tag= "VeryGood"
+	./argparse --tag= no --tag=yes option1 option2
+	./argparse ?
+	./argparse -?
+	./argparse --unknown
+
+	Notice which command-lines work as expected. Spaces, even in quotes, are parsed
+
+helpDOC
+
 }
 
 function show_version()
@@ -36,7 +39,7 @@ function store_myarg()
 
 function store_tag()
 {
-	echo "The  \"--tag= <value>\" option has been detected with the"
+	echo "The  \"--tag=<value>\" option has been detected with the"
 	echo "    value \"$@\". would be assigned to a global variable."
 }
 
@@ -63,12 +66,12 @@ function parse_command_line()
 				store_myarg
 				;;
 			--tag=*)
-				val="$1"; shift
+				val="$(echo "$arg" | cut -f 2- -d =)"
 				store_tag "$val"
 				;;
 			-*)
 				echo >&2 "$MY_CMD: illegal option \`$arg'"
-				echo >&2 "Run '$MY_CMD --help' for more information"
+				echo >&2 "         Run '$MY_CMD --help' for more information"
 				exit 1
 				;;
 			*)
