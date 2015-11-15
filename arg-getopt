@@ -1,0 +1,107 @@
+#!/bin/bash -eu
+
+# This rewrites the argparse script to use getopt (NOT getopts)
+# Notice the difference.
+
+set -o pipefail
+
+MY_CMD=${BASH_SOURCE[0]}
+
+function help_message()
+{
+	cat <<helpDOC
+	
+Here is where you would place statement to
+    print the appropriate help message
+
+
+    try the following different command-lines to see which functions are called:
+	./arg-getopt --version --my-arg --tag="Very good"
+	./arg-getopt --version --my-arg --tag="VeryGood"
+	./arg-getopt --version --my-arg --tag= "VeryGood"
+	./arg-getopt --tag= no --tag=yes option1 option2
+	./arg-getopt ?
+	./arg-getopt -?
+	./arg-getopt --unknown
+
+	Notice which command-lines work as expected. Spaces, even in quotes, are parsed
+
+helpDOC
+
+}
+
+function show_version()
+{
+	echo "Here would be where you would print the script version number"
+}
+
+function store_myarg()
+{
+	echo "The \"--my-arg option\" has been detected. In this function "
+	echo "    a default parameter might be changed from false to true."
+}
+
+function store_tag()
+{
+	echo "The  \"--tag=<value>\" option has been detected with the"
+	echo "    value \"$@\". would be assigned to a global variable."
+}
+
+function store_opt()
+{
+	echo "An option was detected. Here's where the"
+	echo "    \"$@\" option would be interpreted and stored for use by the script."
+}
+
+
+function main()
+{
+	# attempt to discover which version of getopt we have
+	#    does it support long argument names?
+	getopt -T
+	echo "Return value is: $?"
+#	if [ $? eq 4 ]; then
+#		echo "No long argument support"
+		ARGS=$(getopt hvmt: -- "$*")
+#		echo "Can't handle long argument names: $ARGS"
+#	else	
+#		ARGS=$(getopt -l "--version,--my-arg,--tag:" -n "getopt.sh" -- "$*")
+#		echo "Long argument names are supported: $ARGS"
+#	fi
+	
+#	set -- "$ARGS"
+	
+	while [ -n "$1" ]; do
+		case "$1" in
+			-\?|-h|--help)
+				help_message
+				exit
+				;;
+			-v|--version)
+				show_version
+				;;
+			-m|--my-arg)
+				store_myarg
+				;;
+			-t|--tag=*)
+				val=$2
+				store_tag "$val"
+				shift
+				;;
+			-*)
+				echo >&2 "$MY_CMD: illegal option \`$1'"
+				echo >&2 "         Run '$MY_CMD --help' for more information"
+				exit 1
+				;;
+			*)
+				store_opt "$1"
+				;;
+		esac
+		shift
+	done
+	
+
+}
+
+echo "The command line is: $@"
+main "$@"
