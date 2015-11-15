@@ -1,5 +1,7 @@
-#!/bin/bash -eu
+#!/bin/bash -u
 
+### TODO: understand the use of '--' in the lines to do with getopt. It does not
+###       work the way that I would expect it to.
 # This rewrites the argparse script to use getopt (NOT getopts)
 # Notice the difference.
 
@@ -58,18 +60,19 @@ function main()
 {
 	# attempt to discover which version of getopt we have
 	#    does it support long argument names?
+	echo "Entered main"
 	getopt -T
-	echo "Return value is: $?"
-#	if [ $? eq 4 ]; then
-#		echo "No long argument support"
-		ARGS=$(getopt hvmt: -- "$*")
+	if [ $? == 0 ]; then
+		echo "No long argument support"
+		ARGS=$(getopt hvmt: -- "$@")
 #		echo "Can't handle long argument names: $ARGS"
-#	else	
-#		ARGS=$(getopt -l "--version,--my-arg,--tag:" -n "getopt.sh" -- "$*")
-#		echo "Long argument names are supported: $ARGS"
-#	fi
+	else	
+		ARGS=`getopt -o hvmt: -l help,version,my-arg,tag: -n "MTROMP" -- "$@"`
+#		ARGS=$(getopt -o hvmt: -l help,version,my-arg,tag: -- "$@")
+		echo "Long argument names are supported: $ARGS"
+	fi
 	
-#	set -- "$ARGS"
+	eval set -- "$ARGS"
 	
 	while [ -n "$1" ]; do
 		case "$1" in
